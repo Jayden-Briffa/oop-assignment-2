@@ -26,7 +26,6 @@ class IncidentResponse(Ticket):
             title,
             description,
             technician,
-            incidentType,
         )
         self.incidentType = incidentType
 

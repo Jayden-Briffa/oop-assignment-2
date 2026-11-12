@@ -1,5 +1,12 @@
 from Ticket import Ticket, Priority, Status
 from Technician import Technician
+from enum import Enum
+
+
+class TicketType(Enum):
+    NONE = (1,)
+    FEATURE_REQUEST = (2,)
+    INCIDENT_RESPONSE = 3
 
 
 class TicketManager:
@@ -12,6 +19,7 @@ class TicketManager:
 
     def createTicket(
         self,
+        ticketType: TicketType,
         priority: Priority,
         status: Status,
         title: str,

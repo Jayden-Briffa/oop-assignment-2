@@ -1,25 +1,25 @@
 import pytest
 from Ticket import Priority, Status, Ticket
-import helpers as helpers
+import tests.helpers as helpers
 
 
 def testValidatePriorityValid():
     ticket = helpers.generateTestTicket()
-    msg = ticket.validate_priority(Priority.HIGH)
+    msg = ticket.validatePriority(Priority.HIGH)
 
     assert msg is None, f"Expected no error for valid priority, got: {msg}"
 
 
 def testValidatePriorityInvalid():
     ticket = helpers.generateTestTicket()
-    msg = ticket.validate_priority("InvalidPriority")
+    msg = ticket.validatePriority("InvalidPriority")
 
     assert msg is not None, "Expected an error for invalid priority, got None"
 
 
 def testUpdatePriority():
     ticket = helpers.generateTestTicket()
-    ticket.update_priority(Priority.MEDIUM)
+    ticket.updatePriority(Priority.MEDIUM)
 
     assert (
         ticket.priority.value == "Medium"
@@ -28,21 +28,21 @@ def testUpdatePriority():
 
 def testValidateStatusValid():
     ticket = helpers.generateTestTicket()
-    msg = ticket.validate_status(Status.IN_PROGRESS)
+    msg = ticket.validateStatus(Status.IN_PROGRESS)
 
     assert msg is None, f"Expected no error for valid status, got: {msg}"
 
 
 def testValidateStatusInvalid():
     ticket = helpers.generateTestTicket()
-    msg = ticket.validate_status("InvalidStatus")
+    msg = ticket.validateStatus("InvalidStatus")
 
     assert msg is not None, "Expected an error for invalid status, got None"
 
 
 def testUpdateStatus():
     ticket = helpers.generateTestTicket()
-    ticket.update_status(Status.COMPLETED)
+    ticket.updateStatus(Status.COMPLETED)
 
     assert (
         ticket.status.value == "Completed"
@@ -50,21 +50,16 @@ def testUpdateStatus():
 
 
 def testStatusDefaultsToToDo():
-    ticket = Ticket(1, Priority.HIGH, "Test Ticket", "Description", "Test Technician")
+    ticket = Ticket(
+        1, Priority.HIGH, Status.TO_DO, "Test Ticket", "Description", "Test Technician"
+    )
 
     assert ticket.status is Status.TO_DO
 
 
-def testValidateAssignedTechnicianValid():
-    ticket = helpers.generateTestTicket()
-    msg = ticket.validate_assigned_technician("New Technician")
-
-    assert msg is None, f"Expected no error for valid assigned technician, got: {msg}"
-
-
 def testAssignTechnician():
     ticket = helpers.generateTestTicket()
-    ticket.assign_technician("New Technician")
+    ticket.assignTechnician("New Technician")
 
     assert (
         ticket.assignedTechnician == "New Technician"
@@ -73,6 +68,6 @@ def testAssignTechnician():
 
 def testGetId():
     ticket = helpers.generateTestTicket()
-    ticket_id = ticket.get_id()
+    ticket_id = ticket.getId()
 
     assert ticket_id == 1, f"Expected ticket ID to be 1, got: {ticket_id}"

@@ -105,6 +105,7 @@ def outputError(msg: str):
 
     acknowledgeToContinue()
 
+
 def output(*args):
     print(*args)
 

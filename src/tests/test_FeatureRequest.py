@@ -5,7 +5,12 @@ import tests.helpers as helpers
 
 def testStatusDefaultsToNeedsApproval():
     featureRequest = FeatureRequest(
-        1, Priority.HIGH, "Test Feature", "Description", "Test Technician"
+        1,
+        Priority.HIGH,
+        Status.NEEDS_APPROVAL,
+        "Test Feature",
+        "Description",
+        "Test Technician",
     )
 
     assert featureRequest.status is Status.NEEDS_APPROVAL

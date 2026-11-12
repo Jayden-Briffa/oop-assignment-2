@@ -12,7 +12,9 @@ class FeatureRequest(Ticket):
         description: str,
         technician: Technician,
     ):
-        super().__init__(ticket_id, priority, title, description, technician, status)
+        super().__init__(
+            ticket_id, priority, status, title, description, technician
+        )
 
     @classmethod
     def validateStatus(cls, status: str) -> bool:

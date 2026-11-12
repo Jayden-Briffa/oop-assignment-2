@@ -24,10 +24,8 @@ while True:
             "View a ticket": lambda: controllers.viewTicket(ticketManager),
             "View all tickets": lambda: controllers.viewAllTickets(ticketManager),
         }
-
+        
         userChoice = userInterface.executeMenu("Home", mainMenuChoices)
-
-        controllers.saveTickets(ticketManager)
 
     except userInterface.UserAbortException:
         userInterface.output("Operation aborted by the user.")

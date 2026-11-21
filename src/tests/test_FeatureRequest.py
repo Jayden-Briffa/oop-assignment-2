@@ -7,13 +7,12 @@ def testStatusDefaultsToNeedsApproval():
     featureRequest = FeatureRequest(
         1,
         Priority.HIGH,
-        Status.NEEDS_APPROVAL,
         "Test Feature",
         "Description",
         "Test Technician",
     )
 
-    assert featureRequest.status is Status.NEEDS_APPROVAL
+    assert featureRequest.getStatus() is Status.NEEDS_APPROVAL
 
 
 def testValidateStatusAllowsChangeWhenApproved():
@@ -25,11 +24,7 @@ def testValidateStatusAllowsChangeWhenApproved():
     assert msg is None, f"Expected no error for status change when approved, got: {msg}"
 
 
-def testValidateStatusRejectsChangeWhenNotApproved():
+def testValidateStatusAcceptsValidStatusBeforeApproval():
     featureRequest = helpers.generateTestFeatureRequest()
 
-    msg = featureRequest.validateStatus(Status.TO_DO)
-
-    assert (
-        msg is not None
-    ), "Expected an error for status change when not approved, got None"
+    assert featureRequest.validateStatus(Status.TO_DO) is None

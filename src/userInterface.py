@@ -1,7 +1,5 @@
 from Ticket import Ticket
-from TicketManager import TicketManager
 from prompt_toolkit import prompt
-from typing import Callable
 from UserAbortException import UserAbortException
 
 
@@ -39,7 +37,7 @@ def _normaliseMenuInput(userInput: str, choices: list[str]) -> str:
     return ""
 
 
-def _getMenuInput(title, choices: list[str], defaultInput="") -> str | None:
+def _getMenuInput(title, choices: list[str], defaultInput="") -> tuple[str, str]:
     bannerBuffer = "=" * 5
     print(bannerBuffer, title, bannerBuffer)
 
@@ -53,46 +51,39 @@ def _getMenuInput(title, choices: list[str], defaultInput="") -> str | None:
     )
     normalisedChoice = _normaliseMenuInput(userChoice, choices)
 
-    return normalisedChoice
+    return normalisedChoice, userChoice
 
 
 # Provides default choice functionality and validates the user's input against the provided choices
-# Once a valid choice is found, the option's callback function is executed
-def executeMenu(title, choices: dict[str, Callable], defaultChoice="") -> str:
+# Returns the chosen option's text
+def getMenuChoiceInput(title, choices: list[str], defaultChoice="") -> str:
     defaultInput = ""
-    options = list(choices.keys())
     if defaultChoice != "":
         # Derive the default input index from the default choice string
-        for i, choice in enumerate(options):
+        for i, choice in enumerate(choices):
             if choice.lower() == defaultChoice.lower():
                 defaultInput = str(i)
                 break
 
     # Ask for user input until a valid choice is made, or return the default choice if provided
     while True:
-        normalisedIndex = _getMenuInput(title, choices, defaultInput=defaultInput)
-        if normalisedIndex != "":
-            chosenOption = options[int(normalisedIndex)]
-            choices[
-                chosenOption
-            ]()  # Execute the callback function for the selected option
-
-        if defaultChoice != "":
-            choices[
-                defaultChoice
-            ]()  # Execute the callback function for the default option
+        normalisedIndex, userChoice = _getMenuInput(
+            title, choices, defaultInput=defaultInput
+        )
+        if normalisedIndex.isdigit():
+            return choices[int(normalisedIndex)]
 
         outputError(
-            f"Invalid menu input. You must enter numbers (0-{len(choices) - 1}) or the full phrase"
+            f"Invalid menu input: '{userChoice}'. You must enter numbers (0-{len(choices) - 1}) or the full phrase"
         )
 
 
-# Outputs the string representation of a ticekt as returned by the Ticket class's getTicket() method
+# Outputs the ticket details.
 def outputTicket(ticket: Ticket, pressEnter=True):
 
     print()
 
-    ticketOutput = ticket.getTicket()
+    ticketOutput = ticket.getTicketDetails()
     print(ticketOutput)
 
     if pressEnter:
@@ -108,32 +99,3 @@ def outputError(msg: str):
 
 def output(*args):
     print(*args)
-
-
-class UserInterface:
-    def executeMenu(self, title: str, choices: dict[str, Callable]):
-        pass
-
-    def getMenuChoices(self, title: str, choices: list[str]) -> None:
-        pass
-
-    def printTicketSummary(self, ticket: Ticket) -> None:
-        pass
-
-    def printTicketDetails(self, ticket: Ticket) -> None:
-        pass
-
-    def getUserInput(self, prompt_text: str) -> None:
-        pass
-
-    def getMenuInput(self, title: str, choices: list[str]):
-        pass
-
-    def output(self, message: str) -> None:
-        pass
-
-    def errorOutput(self, message: str) -> None:
-        pass
-
-    def acknowledgeToContinue(self) -> None:
-        pass

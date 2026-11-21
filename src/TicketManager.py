@@ -1,46 +1,63 @@
-from Ticket import Ticket, Priority, Status
-from Technician import Technician
 from enum import Enum
+
+from Ticket import Ticket
+from FeatureRequest import FeatureRequest
+from IncidentResponse import IncidentResponse
 
 
 class TicketType(Enum):
-    NONE = (1,)
-    FEATURE_REQUEST = (2,)
-    INCIDENT_RESPONSE = 3
+    NONE = ("None", Ticket)
+    FEATURE_REQUEST = ("Feature Request", FeatureRequest)
+    INCIDENT_RESPONSE = ("Incident Response", IncidentResponse)
+
+    @classmethod
+    def choices(cls):
+        return [e.label() for e in cls]
+
+    def label(self):
+        return self.value[0]
+
+    def cls(self):
+        return self.value[1]
 
 
 class TicketManager:
-    def __init__(self, loadedTickets: dict[int, Ticket] = {}, lastId=0):
-        self._loadedTickets = loadedTickets
+    def __init__(self, loadedTickets: dict[int, Ticket] | None = None, lastId: int = 0):
+        self._loadedTickets = {} if loadedTickets is None else loadedTickets
         self._lastId = lastId
-
-    def getNextId(self) -> int:
-        pass
 
     def createTicket(
         self,
         ticketType: TicketType,
-        priority: Priority,
-        status: Status,
-        title: str,
-        description: str,
-        technician: Technician,
-    ) -> int:
-        pass
+        ticketKwargs: dict,
+    ) -> Ticket:
+        nextId = self._lastId + 1
 
-    def getTicketById(self, ticket_id: int) -> Ticket:
-        pass
+        ticketKwargs = {**ticketKwargs, "id": nextId}
+        newTicket = ticketType.cls()(**ticketKwargs)
+        self._loadedTickets[nextId] = newTicket
+
+        self._lastId = nextId
+        return newTicket
+
+    def updateTicketField(self, ticketId: int, field: str, value) -> None:
+        foundTicket = self.getTicketById(ticketId)
+        if not foundTicket:
+            raise ValueError(f"There is no ticket with id {ticketId}")
+
+        foundTicket.updateField(field, value)
+        return foundTicket
+
+    def approveTicket(self, ticketId: int) -> None:
+        foundTicket = self.getTicketById(ticketId)
+        if not foundTicket:
+            raise ValueError(f"There is no ticket with id {ticketId}")
+
+        foundTicket.approve()
+        return foundTicket
+
+    def getTicketById(self, ticketId: int) -> Ticket | None:
+        return self._loadedTickets.get(ticketId)
 
     def getAllTickets(self) -> dict[int, Ticket]:
-        pass
-
-    def updateTicketStatus(self, ticket_id: int, status: Status) -> None:
-        pass
-
-    def updateTicketPriority(self, ticket_id: int, priority: Priority) -> None:
-        pass
-
-    def updateTicketAssignedTechnician(
-        self, ticket_id: int, technician: Technician
-    ) -> None:
-        pass
+        return self._loadedTickets

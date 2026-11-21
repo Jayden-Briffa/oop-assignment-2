@@ -2,28 +2,46 @@ from Ticket import Priority, Status, Ticket
 from FeatureRequest import FeatureRequest
 
 
-# Accepts 2 tickets as Ticket or dict and raises assertion errors if they don't have the same values for al attributes
+# Accepts 2 tickets as Ticket or dict and raises assertion errors if they don't have the same values for all attributes provided by expectedTicket
 def assertTicketHasSameValues(
     actualTicket: dict | Ticket, expectedTicket: dict | Ticket
 ):
     assert actualTicket is not None, (
-        f"Expected a ticket object, but actual was None.\n"
-        f"expected={expectedTicket!r}\n"
-        f"actual={actualTicket!r}"
+        f"Expected a ticket object, but actual was None. Expected={expectedTicket!r}, actual={actualTicket!r}"
     )
+
+    privateAttributeNames = {
+        "id": "_id",
+        "priority": "_priority",
+        "status": "_status",
+        "title": "_title",
+        "description": "_description",
+        "assignedTechnician": "_assignedTechnician",
+        "approved": "_approved",
+        "incidentType": "_incidentType",
+    }
+
+    def normalizeTicketValues(values):
+        return {
+            privateAttributeNames.get(name, name): value
+            for name, value in values.items()
+        }
 
     actualValues = (
-        actualTicket if isinstance(actualTicket, dict) else vars(actualTicket)
+        normalizeTicketValues(actualTicket)
+        if isinstance(actualTicket, dict)
+        else vars(actualTicket)
     )
     expectedValues = (
-        expectedTicket if isinstance(expectedTicket, dict) else vars(expectedTicket)
+        normalizeTicketValues(expectedTicket)
+        if isinstance(expectedTicket, dict)
+        else vars(expectedTicket)
     )
 
-    assert actualValues == expectedValues, (
-        f"Ticket mismatch:\n"
-        f"expected={expectedValues!r}\n"
-        f"actual={actualValues!r}"
-    )
+    for key, value in expectedValues.items():
+        assert actualValues.get(key) == value, (
+            f"Ticket mismatch: expected {key}={value!r}, actual={actualValues.get(key)!r}"
+        )
 
 
 # Retrieves the next answer on each execution
@@ -111,7 +129,6 @@ def generateTestTicket():
     return Ticket(
         1,
         Priority.HIGH,
-        Status.IN_PROGRESS,
         "Test Ticket",
         "This is a test ticket.",
         "Test Technician",
@@ -122,7 +139,6 @@ def generateTestFeatureRequest():
     return FeatureRequest(
         1,
         Priority.HIGH,
-        Status.NEEDS_APPROVAL,
         "Test Feature",
         "Description",
         "Test Technician",

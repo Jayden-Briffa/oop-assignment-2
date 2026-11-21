@@ -1,33 +1,58 @@
-from Ticket import Priority, Status, Ticket
+from Ticket import FieldDetails, Priority, Status, Ticket
 from Technician import Technician
 from enum import Enum
 
 
 class IncidentType(Enum):
-    CYBER_SECURITY = "Cybers Security"
+    CYBER_SECURITY = "Cyber Security"
     SERVICE_OUTAGE = "Service Outage"
 
 
 class IncidentResponse(Ticket):
     def __init__(
         self,
-        ticket_id: int,
+        ticketId: int,
         priority: Priority,
-        status: Status,
         title: str,
         description: str,
         technician: Technician,
         incidentType: IncidentType,
     ):
         super().__init__(
-            ticket_id,
+            ticketId,
             priority,
-            status,
             title,
             description,
             technician,
         )
-        self.incidentType = incidentType
+        self._incidentType = incidentType
+
+    def getIncidentType(self) -> IncidentType:
+        return self._incidentType
+
+    def validateIncidentType(self, incidentType: IncidentType | str) -> None:
+        if isinstance(incidentType, IncidentType):
+            return
+
+        try:
+            IncidentType(incidentType)
+        except ValueError:
+            raise ValueError(f"Invalid incident type '{incidentType}'") from None
+
+    def getFieldDetails(self):
+        return {
+            **super().getFieldDetails(),
+            "incidentType": FieldDetails(
+                name="incidentType",
+                prompt="Incident type",
+                isInitializedByUser=True,
+                validator=self.validateIncidentType,
+                transformer=IncidentType,
+                choices=IncidentType,
+            ),
+        }
 
     def getTicketDetails(self) -> str:
-        pass
+        ticketStr = super().getTicketDetails()
+        ticketStr += f"\nIncident Type: {self._incidentType}"
+        return ticketStr

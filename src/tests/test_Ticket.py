@@ -4,70 +4,97 @@ import tests.helpers as helpers
 
 
 def testValidatePriorityValid():
-    ticket = helpers.generateTestTicket()
-    msg = ticket.validatePriority(Priority.HIGH)
+    validator = helpers.generateTestTicket().getFieldDetails()["priority"].validator
 
-    assert msg is None, f"Expected no error for valid priority, got: {msg}"
+    assert validator(Priority.HIGH) is None
 
 
 def testValidatePriorityInvalid():
-    ticket = helpers.generateTestTicket()
-    msg = ticket.validatePriority("InvalidPriority")
+    validator = helpers.generateTestTicket().getFieldDetails()["priority"].validator
 
-    assert msg is not None, "Expected an error for invalid priority, got None"
+    with pytest.raises(ValueError):
+        validator("InvalidPriority")
+
+def testValidateTitleUpper():
+    validator = helpers.generateTestTicket().getFieldDetails()["title"].validator
+
+    assert validator("a" * 50) is None
+
+
+def testValidateTitleLower():
+    validator = helpers.generateTestTicket().getFieldDetails()["title"].validator
+
+    assert validator("abc") is None
+
+
+def testValidateTitleInvalidUpper():
+    validator = helpers.generateTestTicket().getFieldDetails()["title"].validator
+
+    with pytest.raises(ValueError):
+        validator("a" * 51)
+
+
+def testValidateTitleInvalidLower():
+    validator = helpers.generateTestTicket().getFieldDetails()["title"].validator
+
+    with pytest.raises(ValueError):
+        validator("ab")
 
 
 def testUpdatePriority():
     ticket = helpers.generateTestTicket()
-    ticket.updatePriority(Priority.MEDIUM)
+    ticket.updateField("priority", Priority.MEDIUM)
 
     assert (
-        ticket.priority.value == "Medium"
-    ), f"Expected priority to be 'Medium', got: {ticket.priority}"
+        ticket.getPriority().value == "Medium"
+    ), f"Expected priority to be 'Medium', got: {ticket.getPriority()}"
 
 
 def testValidateStatusValid():
-    ticket = helpers.generateTestTicket()
-    msg = ticket.validateStatus(Status.IN_PROGRESS)
+    validator = helpers.generateTestTicket().getFieldDetails()["status"].validator
 
-    assert msg is None, f"Expected no error for valid status, got: {msg}"
+    assert validator(Status.IN_PROGRESS) is None
 
 
 def testValidateStatusInvalid():
-    ticket = helpers.generateTestTicket()
-    msg = ticket.validateStatus("InvalidStatus")
+    validator = helpers.generateTestTicket().getFieldDetails()["status"].validator
 
-    assert msg is not None, "Expected an error for invalid status, got None"
+    with pytest.raises(ValueError):
+        validator("InvalidStatus")
 
 
 def testUpdateStatus():
     ticket = helpers.generateTestTicket()
-    ticket.updateStatus(Status.COMPLETED)
+    ticket.updateField("status", Status.COMPLETED)
 
     assert (
-        ticket.status.value == "Completed"
-    ), f"Expected status to be 'Completed', got: {ticket.status}"
+        ticket.getStatus().value == "Completed"
+    ), f"Expected status to be 'Completed', got: {ticket.getStatus()}"
 
 
 def testStatusDefaultsToToDo():
     ticket = Ticket(
-        1, Priority.HIGH, Status.TO_DO, "Test Ticket", "Description", "Test Technician"
+        1,
+        Priority.HIGH,
+        "Test Ticket",
+        "D" "escription",
+        "Test Technician",
     )
 
-    assert ticket.status is Status.TO_DO
+    assert ticket.getStatus() is Status.TO_DO
 
 
 def testAssignTechnician():
     ticket = helpers.generateTestTicket()
-    ticket.assignTechnician("New Technician")
+    ticket.updateField("assignedTechnician", "New Technician")
 
     assert (
-        ticket.assignedTechnician == "New Technician"
-    ), f"Expected assigned technician to be 'New Technician', got: {ticket.assignedTechnician}"
+        ticket.getAssignedTechnician() == "New Technician"
+    ), f"Expected assigned technician to be 'New Technician', got: {ticket.getAssignedTechnician()}"
 
 
 def testGetId():
     ticket = helpers.generateTestTicket()
-    ticket_id = ticket.getId()
+    ticketId = ticket.getId()
 
-    assert ticket_id == 1, f"Expected ticket ID to be 1, got: {ticket_id}"
+    assert ticketId == 1, f"Expected ticket ID to be 1, got: {ticketId}"

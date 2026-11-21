@@ -1,31 +1,28 @@
 import userInterface
-import controllers as controllers
+import controllers
 from TicketManager import TicketManager
-from Ticket import Ticket
-import userInterface
 
 ticketManager = TicketManager()
 
 while True:
     try:
-        bannerBuffer = "-" * 2
         userInterface.output(
-            bannerBuffer,
+            "-" * 2,
             "TYPE 'abort' AT ANY TIME TO ABORT THE CURRENT OPERATION",
-            bannerBuffer,
+            "-" * 2,
         )
 
-        bannerBuffer = "=" * 5
         mainMenuChoices = {
             "Create a new ticket": lambda: controllers.createTicket(ticketManager),
             "Update an existing ticket": lambda: controllers.updateTicket(
                 ticketManager
             ),
-            "View a ticket": lambda: controllers.viewTicket(ticketManager),
+            "View a ticket": lambda: controllers.viewTicketById(ticketManager),
             "View all tickets": lambda: controllers.viewAllTickets(ticketManager),
         }
-        
-        userChoice = userInterface.executeMenu("Home", mainMenuChoices)
+
+        userChoice = userInterface.getMenuChoiceInput("Home", list(mainMenuChoices))
+        mainMenuChoices[userChoice]()
 
     except userInterface.UserAbortException:
         userInterface.output("Operation aborted by the user.")

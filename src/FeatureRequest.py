@@ -1,27 +1,30 @@
-from Ticket import Ticket, Priority, Status
+from Ticket import FieldDetails, Ticket, Priority, Status
 from Technician import Technician
 
 
 class FeatureRequest(Ticket):
     def __init__(
         self,
-        ticket_id: int,
+        ticketId: int,
         priority: Priority,
-        status: Status,
         title: str,
         description: str,
         technician: Technician,
+        approved: bool = False,
     ):
-        super().__init__(
-            ticket_id, priority, status, title, description, technician
-        )
-
-    @classmethod
-    def validateStatus(cls, status: str) -> bool:
-        pass
+        self._approved = approved
+        super().__init__(ticketId, priority, title, description, technician)
+        self._status = Status.NEEDS_APPROVAL
 
     def approve(self) -> bool:
-        pass
+        self._approved = True
+        return self._approved
 
-    def getTicketDetails(self) -> bool:
-        pass
+    def getApproved(self) -> bool:
+        return self._approved
+
+    def getTicketDetails(self) -> str:
+        ticketStr = super().getTicketDetails()
+        ticketStr += f"\nApproved: {self._approved}"
+
+        return ticketStr

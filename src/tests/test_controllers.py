@@ -2,8 +2,8 @@ import tests.helpers as helpers
 import userInterface
 import controllers
 from Ticket import Status, Priority, Ticket
-from typing import Callable
 from TicketManager import TicketType
+from typing import Callable
 
 
 def setupMonkeyPatchInputs(monkeypatch, expectedTicketInputs):
@@ -32,18 +32,18 @@ def executeCreateUpdateTestCase(dummyTicketManager, expectedTicket, callback: Ca
 def testCreateTicketStandard(monkeypatch, dummyTicketManager):
     expectedNewTicketInputs = {
         "id": 4,
-        "_": [TicketType.NONE],
-        "title": ["Additional ticket"],
+        "_": [TicketType.NONE.label()],
+        "title": ["additional ticket"],
+        "description": ["additional description"],
         "priority": [Priority.HIGH.value],
-        "status": Status.TO_DO,
-        "assignedTechnician": ["Jamie"],
+        "assignedTechnician": ["jamie"],
     }
 
     expectedTicket = setupMonkeyPatchInputs(monkeypatch, expectedNewTicketInputs)
     actualTicket = executeCreateUpdateTestCase(
         dummyTicketManager, expectedTicket, controllers.createTicket
     )
-    assert actualTicket.id == expectedTicket["id"]
+    assert actualTicket.getId() == expectedTicket["id"]
 
     assert (
         type(actualTicket) == Ticket
@@ -55,11 +55,11 @@ def testUpdateTicketPriority(monkeypatch, dummyTicketManager):
     expectedTicketInputs = {
         "id": ["3"],
         "_": ["Priority"],
-        "title": previousTicketState.title,
-        "description": previousTicketState.description,
+        "title": previousTicketState.getTitle(),
+        "description": previousTicketState.getDescription(),
         "priority": [Priority.HIGH.value],
-        "status": previousTicketState.status,
-        "assignedTechnician": previousTicketState.assignedTechnician,
+        "status": previousTicketState.getStatus(),
+        "assignedTechnician": previousTicketState.getAssignedTechnician(),
     }
 
     expectedTicket = setupMonkeyPatchInputs(monkeypatch, expectedTicketInputs)
@@ -73,11 +73,11 @@ def testUpdateTicketStatus(monkeypatch, dummyTicketManager):
     expectedTicketInputs = {
         "id": ["3"],
         "_": ["Status"],
-        "title": previousTicketState.title,
-        "description": previousTicketState.description,
-        "priority": previousTicketState.priority,
+        "title": previousTicketState.getTitle(),
+        "description": previousTicketState.getDescription(),
+        "priority": previousTicketState.getPriority(),
         "status": [Status.IN_PROGRESS],
-        "assignedTechnician": previousTicketState.assignedTechnician,
+        "assignedTechnician": previousTicketState.getAssignedTechnician(),
     }
 
     expectedTicket = setupMonkeyPatchInputs(monkeypatch, expectedTicketInputs)
@@ -91,11 +91,11 @@ def testUpdateTicketTechnician(monkeypatch, dummyTicketManager):
     expectedTicketInputs = {
         "id": ["3"],
         "_": ["Assigned technician"],
-        "title": previousTicketState.title,
-        "description": previousTicketState.description,
-        "priority": previousTicketState.priority,
-        "status": previousTicketState.status,
-        "assignedTechnician": "Jamie",
+        "title": previousTicketState.getTitle(),
+        "description": previousTicketState.getDescription(),
+        "priority": previousTicketState.getPriority(),
+        "status": previousTicketState.getStatus(),
+        "assignedTechnician": ["jamie"],
     }
 
     expectedTicket = setupMonkeyPatchInputs(monkeypatch, expectedTicketInputs)
@@ -104,13 +104,14 @@ def testUpdateTicketTechnician(monkeypatch, dummyTicketManager):
     )
 
 
-def testUpdateFeatureRequestApproval(monkeypatch, dummyTicketManager):
+def testApproveTicket(monkeypatch, dummyTicketManager):
     expectedTicketInputs = {"id": ["2", "yes"], "approved": True}
 
-    setupMonkeyPatchInputs(monkeypatch, expectedTicketInputs)
+    expectedTicket = setupMonkeyPatchInputs(monkeypatch, expectedTicketInputs)
 
-    newTicketState = dummyTicketManager._loadedTickets[2]
-    assert newTicketState.approved
+    newTicketState = controllers.approveTicket(dummyTicketManager)
+
+    helpers.assertTicketHasSameValues(newTicketState, expectedTicket)
 
 
 def testViewTaskById(monkeypatch, dummyTicketManager):
@@ -120,7 +121,7 @@ def testViewTaskById(monkeypatch, dummyTicketManager):
 
     foundTicket = controllers.viewTicketById(dummyTicketManager)
     expectedTicket = dummyTicketManager._loadedTickets[2]
-    assert foundTicket.id == expectedTicket.id
+    assert foundTicket.getId() == expectedTicket.getId()
 
 
 def testViewAllTasks(monkeypatch, dummyTicketManager):

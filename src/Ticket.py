@@ -70,7 +70,7 @@ class Ticket:
 
         return fieldDetails.transformer(value)
 
-    def validateTitle(self, title: str) -> None:
+    def _validateTitle(self, title: str) -> None:
         if not isinstance(title, str):
             raise TypeError(f"Invalid title '{title}': title must be a string")
 
@@ -79,7 +79,7 @@ class Ticket:
                 f"Invalid title '{title}': title must be between 3 and 50 characters long (inclusive)"
             )
 
-    def validatePriority(self, priority: str | Priority) -> None:
+    def _validatePriority(self, priority: str | Priority) -> None:
         if isinstance(priority, Priority):
             return
 
@@ -92,7 +92,7 @@ class Ticket:
             + ", ".join([p.value for p in Priority])
         )
 
-    def validateStatus(self, status: str) -> None:
+    def _validateStatus(self, status: str) -> None:
         if isinstance(status, Status):
             return
 
@@ -105,25 +105,25 @@ class Ticket:
             + ", ".join([s.value for s in Status])
         )
 
-    def validateTechnician(self, technician: str) -> None:
+    def _validateTechnician(self, technician: str) -> None:
         if not isinstance(technician, str):
             return f"Invalid assignedTechnician '{technician}': assignedTechnician must be a string"
 
         return None
 
-    def transformTechnician(self, technician: str) -> Technician:
+    def _transformTechnician(self, technician: str) -> Technician:
         return Technician(technician)
 
     def getFieldDetails(self) -> dict[str, FieldDetails]:
         return {
-            "title": FieldDetails("title", "Title", True, False, self.validateTitle),
+            "title": FieldDetails("title", "Title", True, False, self._validateTitle),
             "description": FieldDetails("description", "Description", True),
             "priority": FieldDetails(
                 "priority",
                 "Priority",
                 True,
                 True,
-                self.validatePriority,
+                self._validatePriority,
                 Priority,
                 Priority,
             ),
@@ -132,7 +132,7 @@ class Ticket:
                 "Status",
                 False,
                 True,
-                self.validateStatus,
+                self._validateStatus,
                 Status,
                 Status,
             ),
@@ -141,8 +141,8 @@ class Ticket:
                 "Assigned technician",
                 True,
                 True,
-                self.validateTechnician,
-                self.transformTechnician,
+                self._validateTechnician,
+                self._transformTechnician,
             ),
         }
 

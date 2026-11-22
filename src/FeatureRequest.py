@@ -23,8 +23,8 @@ class FeatureRequest(Ticket):
     def getApproved(self) -> bool:
         return self._approved
 
-    def validateStatus(self, status: str | Status) -> None:
-        super().validateStatus(status)
+    def _validateStatus(self, status: str | Status) -> None:
+        super()._validateStatus(status)
 
         if self._approved is not True:
             raise ValueError(
@@ -38,7 +38,7 @@ class FeatureRequest(Ticket):
             "Status",
             False,
             True,
-            self.validateStatus,
+            self._validateStatus,
             Status,
             Status,
         )

@@ -30,7 +30,7 @@ class IncidentResponse(Ticket):
     def getIncidentType(self) -> IncidentType:
         return self._incidentType
 
-    def validateIncidentType(self, incidentType: IncidentType | str) -> None:
+    def _validateIncidentType(self, incidentType: IncidentType | str) -> None:
         if isinstance(incidentType, IncidentType):
             return
 
@@ -46,7 +46,7 @@ class IncidentResponse(Ticket):
                 name="incidentType",
                 prompt="Incident type",
                 isInitializedByUser=True,
-                validator=self.validateIncidentType,
+                validator=self._validateIncidentType,
                 transformer=IncidentType,
                 choices=IncidentType,
             ),

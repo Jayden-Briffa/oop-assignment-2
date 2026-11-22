@@ -3,6 +3,7 @@ import controllers
 from TicketManager import TicketManager
 
 ticketManager = TicketManager()
+ticketManager.seedData()
 
 while True:
     try:
@@ -17,6 +18,7 @@ while True:
             "Update an existing ticket": lambda: controllers.updateTicket(
                 ticketManager
             ),
+            "Approve a ticket": lambda: controllers.approveTicket(ticketManager),
             "View a ticket": lambda: controllers.viewTicketById(ticketManager),
             "View all tickets": lambda: controllers.viewAllTickets(ticketManager),
         }

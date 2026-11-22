@@ -1,8 +1,8 @@
 from enum import Enum
 
-from Ticket import Ticket
+from Ticket import Priority, Status, Ticket
 from FeatureRequest import FeatureRequest
-from IncidentResponse import IncidentResponse
+from IncidentResponse import IncidentResponse, IncidentType
 
 
 class TicketType(Enum):
@@ -61,3 +61,35 @@ class TicketManager:
 
     def getAllTickets(self) -> dict[int, Ticket]:
         return self._loadedTickets
+
+    def seedData(self) -> None:
+        incidentResponse = IncidentResponse(
+            id=1,
+            priority=Priority.HIGH,
+            title="Cannot access account",
+            description="User is unable to sign in.",
+            assignedTechnician="Alex",
+            incidentType=IncidentType.CYBER_SECURITY,
+        )
+        featureRequest = FeatureRequest(
+            id=2,
+            priority=Priority.MEDIUM,
+            title="Add export option",
+            description="Add CSV export to reports.",
+            assignedTechnician="Sam",
+        )
+        ticket = Ticket(
+            id=3,
+            priority=Priority.LOW,
+            title="Update help text",
+            description="Clarify the password reset instructions.",
+            assignedTechnician="Jordan",
+        )
+
+        incidentResponse.updateField("status", Status.IN_PROGRESS)
+        self._loadedTickets = {
+            incidentResponse.getId(): incidentResponse,
+            featureRequest.getId(): featureRequest,
+            ticket.getId(): ticket,
+        }
+        self._lastId = ticket.getId()

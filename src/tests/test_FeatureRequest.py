@@ -24,7 +24,7 @@ def testValidateStatusAllowsChangeWhenApproved():
     assert msg is None, f"Expected no error for status change when approved, got: {msg}"
 
 
-def testValidateStatusAcceptsValidStatusBeforeApproval():
+def testValidateStatusRejectsChangeBeforeApproval():
     featureRequest = helpers.generateTestFeatureRequest()
 
-    assert featureRequest.validateStatus(Status.TO_DO) is None
+    pytest.raises(ValueError, featureRequest.validateStatus, Status.TO_DO)

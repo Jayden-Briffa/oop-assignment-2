@@ -125,6 +125,12 @@ def testViewTaskById(monkeypatch, dummyTicketManager):
 
 
 def testViewAllTasks(monkeypatch, dummyTicketManager):
+    monkeypatch.setattr(
+        userInterface,
+        "getUserInput",
+        helpers.mockGetUserInputFactory(iter([""])),
+    )
+
     foundTickets = controllers.viewAllTickets(dummyTicketManager)
     expectedTickets = dummyTicketManager._loadedTickets
 

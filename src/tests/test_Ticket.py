@@ -15,6 +15,7 @@ def testValidatePriorityInvalid():
     with pytest.raises(ValueError):
         validator("InvalidPriority")
 
+
 def testValidateTitleUpper():
     validator = helpers.generateTestTicket().getFieldDetails()["title"].validator
 

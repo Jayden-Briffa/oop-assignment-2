@@ -11,19 +11,19 @@ class IncidentType(Enum):
 class IncidentResponse(Ticket):
     def __init__(
         self,
-        ticketId: int,
+        id: int,
         priority: Priority,
         title: str,
         description: str,
-        technician: Technician,
+        assignedTechnician: Technician,
         incidentType: IncidentType,
     ):
         super().__init__(
-            ticketId,
+            id,
             priority,
             title,
             description,
-            technician,
+            assignedTechnician,
         )
         self._incidentType = incidentType
 

@@ -31,6 +31,9 @@ def createTicket(ticketManager):
         allUserInputs[fieldLabel] = userInput
 
     createdTicket = ticketManager.createTicket(ticketType, allUserInputs)
+
+    userInterface.output("Ticket created:", createdTicket.getTicketDetails())
+    userInterface.acknowledgeToContinue()
     return createdTicket
 
 
@@ -40,7 +43,7 @@ def updateTicket(ticketManager):
     if foundTicket is None:
         raise ValueError(f"There is no ticket with id {ticketId}")
 
-    userInterface.output("Found ticket:", foundTicket)
+    userInterface.output("Found ticket:", foundTicket.getTicketDetails())
 
     fieldDetails = foundTicket.getFieldDetails()
     mutableFields = {
@@ -79,21 +82,26 @@ def updateTicket(ticketManager):
         foundTicket.getId(), fieldLabel, newFieldValue
     )
 
+    userInterface.output("Ticket updated.", newTicketState.getTicketDetails())
+    userInterface.acknowledgeToContinue()
     return foundTicket if newTicketState is None else newTicketState
 
 
 def approveTicket(ticketManager):
     allTickets = ticketManager.getAllTickets()
     unapprovedTickets = [
-        t for t in allTickets.values() if hasattr(t, "approved") and not t.approved
+        t for t in allTickets.values() if hasattr(t, "approve") and not t.getApproved()
     ]
 
-    userInterface.output("Unapproved tickets:")
+    userInterface.output("Unapproved tickets:", "NONE" if not unapprovedTickets else "")
     for t in unapprovedTickets:
         userInterface.output(t.getTicketSummary())
 
     ticketId = int(userInterface.getUserInput("Enter ticket ID to approve"))
-    return ticketManager.approveTicket(ticketId)
+
+    newTicketState = ticketManager.approveTicket(ticketId)
+    userInterface.output("Ticket approved.", newTicketState.getTicketDetails())
+    return newTicketState
 
 
 def viewTicketById(ticketManager):
@@ -103,12 +111,16 @@ def viewTicketById(ticketManager):
         raise ValueError(f"There is no ticket with id {ticketId}")
 
     userInterface.output(foundTicket.getTicketDetails())
+
+    userInterface.acknowledgeToContinue()
     return foundTicket
 
 
 def viewAllTickets(ticketManager):
+
     tickets = ticketManager.getAllTickets()
     for ticket in tickets.values():
         userInterface.output(ticket.getTicketSummary())
 
+    userInterface.acknowledgeToContinue()
     return tickets

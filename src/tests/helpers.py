@@ -6,9 +6,9 @@ from FeatureRequest import FeatureRequest
 def assertTicketHasSameValues(
     actualTicket: dict | Ticket, expectedTicket: dict | Ticket
 ):
-    assert actualTicket is not None, (
-        f"Expected a ticket object, but actual was None. Expected={expectedTicket!r}, actual={actualTicket!r}"
-    )
+    assert (
+        actualTicket is not None
+    ), f"Expected a ticket object, but actual was None. Expected={expectedTicket!r}, actual={actualTicket!r}"
 
     privateAttributeNames = {
         "id": "_id",
@@ -39,9 +39,9 @@ def assertTicketHasSameValues(
     )
 
     for key, value in expectedValues.items():
-        assert actualValues.get(key) == value, (
-            f"Ticket mismatch: expected {key}={value!r}, actual={actualValues.get(key)!r}"
-        )
+        assert (
+            actualValues.get(key) == value
+        ), f"Ticket mismatch: expected {key}={value!r}, actual={actualValues.get(key)!r}"
 
 
 # Retrieves the next answer on each execution
@@ -49,6 +49,9 @@ def assertTicketHasSameValues(
 def mockGetUserInputFactory(answers):
     # compatible with original "prompt" and "default" function parameters, but it doesn't need to use them
     def mockGetUserInput(prompt="", default="", format=True):
+        if "Press enter to continue..." in prompt:
+            return ""
+
         answer = next(answers)
         if format:
             return answer.strip().lower()

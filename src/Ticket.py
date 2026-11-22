@@ -74,7 +74,7 @@ class Ticket:
         if not isinstance(title, str):
             raise TypeError(f"Invalid title '{title}': title must be a string")
 
-        if not 3 >= len(title) and len(title) <= 50:
+        if not (3 <= len(title) and len(title) <= 50):
             raise ValueError(
                 f"Invalid title '{title}': title must be between 3 and 50 characters long (inclusive)"
             )
@@ -116,9 +116,7 @@ class Ticket:
 
     def getFieldDetails(self) -> dict[str, FieldDetails]:
         return {
-            "title": FieldDetails(
-                "title", "Title", True, False, self.validateTitle
-            ),
+            "title": FieldDetails("title", "Title", True, False, self.validateTitle),
             "description": FieldDetails("description", "Description", True),
             "priority": FieldDetails(
                 "priority",

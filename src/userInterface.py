@@ -2,6 +2,7 @@ from Ticket import Ticket
 from prompt_toolkit import prompt
 from UserAbortException import UserAbortException
 
+""" Handles user input and output operations """
 
 # Remove case sensitivity
 def formatAsUserInput(msg: str):

@@ -39,6 +39,7 @@ class IncidentResponse(Ticket):
         except ValueError:
             raise ValueError(f"Invalid incident type '{incidentType}'") from None
 
+    # Returns field details appended with incidentType configuration
     def getFieldDetails(self):
         return {
             **super().getFieldDetails(),
@@ -52,6 +53,7 @@ class IncidentResponse(Ticket):
             ),
         }
 
+    # Appends incident type to ticket details
     def getTicketDetails(self) -> str:
         ticketStr = super().getTicketDetails()
         ticketStr += f"\nIncident Type: {self._incidentType}"

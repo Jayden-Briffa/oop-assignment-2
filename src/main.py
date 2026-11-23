@@ -3,7 +3,7 @@ import controllers
 from TicketManager import TicketManager
 
 ticketManager = TicketManager()
-ticketManager.seedData()
+ticketManager.seedData() # seed initial tickets for prototype testing
 
 while True:
     try:
@@ -13,6 +13,7 @@ while True:
             "-" * 2,
         )
 
+        # dictionary of human-readable label -> controller function
         mainMenuChoices = {
             "Create a new ticket": lambda: controllers.createTicket(ticketManager),
             "Update an existing ticket": lambda: controllers.updateTicket(
@@ -30,5 +31,7 @@ while True:
         userInterface.output("Operation aborted by the user.")
         userInterface.acknowledgeToContinue()
 
+    # Catches validation errors and other exceptions
+    # Validation errors should be differentiated from general errors in future iterations
     except Exception as e:
         userInterface.outputError(f"An unexpected error occurred: {str(e)}")

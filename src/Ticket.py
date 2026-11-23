@@ -1,14 +1,3 @@
-# bannerBuffer = "-" * 3
-# category = task.category if task.category != "" else "<no output>"
-# description = task.description if task.description != "" else "<no description>"
-# deadline = task.deadline if task.deadline != "" else "<no deadline>"
-
-# print(bannerBuffer, task.name, f"(#{task.id})", bannerBuffer)
-# print(f"- Category: {category}")
-# print(f"- Status: {task.status}")
-# print(description)
-# print(f"[ Deadline: {deadline} ]")
-
 from dataclasses import dataclass
 from enum import Enum
 from typing import Any, Callable
@@ -33,6 +22,7 @@ class Status(
     COMPLETED = "Completed"
 
 
+# Defines metadata for attributes
 @dataclass
 class FieldDetails:
     name: str
@@ -62,6 +52,7 @@ class Ticket:
             "assignedTechnician", assignedTechnician
         )
 
+    # Validators should be called inside Ticket, or through FieldDetails
     def _validateAndTransformField(self, field: str, value: Any) -> Any:
         fieldDetails = self.getFieldDetails()[field]
         validationError = fieldDetails.validator(value)
@@ -154,9 +145,11 @@ class Ticket:
 
         raise ValueError("Field is not mutable")
 
+    # Returns brief summary of ticket on one line
     def getTicketSummary(self) -> str:
         return f"#{self._id}: {self._title} - {self._status} [Assigned: {self._assignedTechnician}]"
 
+    # Returns detailed view of ticket
     def getTicketDetails(self) -> str:
         banner = "=" * 3 + f"#{self._id}: {self._title} " + "=" * 3
         description = f"Description: {self._description}"

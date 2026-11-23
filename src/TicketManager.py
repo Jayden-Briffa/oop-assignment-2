@@ -4,7 +4,7 @@ from Ticket import Priority, Status, Ticket
 from FeatureRequest import FeatureRequest
 from IncidentResponse import IncidentResponse, IncidentType
 
-
+# Abstracts ticket types from individual classes for TicketManager to interface with
 class TicketType(Enum):
     NONE = ("None", Ticket)
     FEATURE_REQUEST = ("Feature Request", FeatureRequest)
@@ -62,6 +62,7 @@ class TicketManager:
     def getAllTickets(self) -> dict[int, Ticket]:
         return self._loadedTickets
 
+    # Seeds initial tickets for prototype testing
     def seedData(self) -> None:
         incidentResponse = IncidentResponse(
             id=1,
